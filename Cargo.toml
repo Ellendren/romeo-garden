@@ -1,0 +1,8 @@
+[package]
+name = "rm_server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mysql = "25.0.1"
+serde = "1.0.205"
