@@ -1,6 +1,6 @@
 [database]
 username = "<username>"
 password = "<package>"
-database_name = "romeo-garden"
+database_name = "romeo_garden"
 port = "3306"
 host = "localhost"

@@ -1,6 +1,7 @@
 use serde::Deserialize;
 use std::{fs::File, io::Read};
 use mysql::*;
+use colored::Colorize;
 
 #[derive(Deserialize, Debug)]
 struct Database {
@@ -9,6 +10,19 @@ struct Database {
     database_name: String,
     port: String,
     host: String
+}
+
+impl Database {
+    fn get_url_mysql(&self) -> String{
+        let url = "mysql://".to_string()
+            + &self.username + ":"
+            + &self.password + "@"
+            + &self.host + ":"
+            + &self.port + "/"
+            + &self.database_name;
+        
+        url
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -40,5 +54,32 @@ impl Connection {
             config: config,
             pool: None
         }
+    }
+
+    //init new Pool if one doesn't exist for this version of Connection
+    pub fn get_pool(mut self) -> Pool {
+        match self.pool {
+            Some(pool) => return pool,
+            None => {}
+        }
+
+        let url = self.config.database.get_url_mysql();
+
+        self.pool = match Pool::new(url.as_str()) {
+            Ok(pool) => Some(pool),
+            Err(e) => {
+                let err_str = format!("{} {}: {:?}",
+                     "Error creating connection pool for"
+                        .bold()
+                        .red(), 
+                     self.config.database.database_name
+                        .bold()
+                        .red(),
+                     e);
+                panic!("{}", err_str);
+            }
+        };
+
+        self.pool.unwrap()
     }
 }
