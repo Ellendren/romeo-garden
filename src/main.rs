@@ -1,3 +1,7 @@
+use connection::Connection;
+
+mod connection;
+
 fn main() {
-    println!("Hello, world!");
+    let conn = Connection::new(None);
 }
