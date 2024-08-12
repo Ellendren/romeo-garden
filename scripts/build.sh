@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cargo_source="/var/lib/jenkins/.cargo/env"
+cargo_source="/var/lib/jenkins/.bashrc"
 source $cargo_source
 
 echo -e "${BLUE}running rustup"
