@@ -11,5 +11,11 @@ pipeline {
                 sh './scripts/build.sh'
             }
         }
+        
+        stage ('test') {
+            steps {
+                sh 'cargo test'
+            }
+        }
     }
 }

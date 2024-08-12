@@ -21,4 +21,4 @@ fi
 echo -e "${BLUE}running rustup"
 rustup update
 
-cargo build
+cargo build --release
