@@ -8,4 +8,8 @@ target="release"
 deploy_dir="$RMBIN/$target"
 build_bin="target/$target/$RMGDIR"
 
+if ! $deploy_dir; then
+    mkdir $deploy_dir
+fi
+
 cp $build_bin $deploy_dir
