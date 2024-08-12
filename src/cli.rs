@@ -15,7 +15,7 @@ enum Command {
 }
 
 pub fn parser_args() -> Result<(), Error> {
-    let command = std::env::args().nth(1).expect("");
+    let command = std::env::args().nth(1).expect("Expected command");
     match match_command(command) {
         Ok(_) => {},
         Err(err) => return Err(err) 
