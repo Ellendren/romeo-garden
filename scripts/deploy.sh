@@ -5,8 +5,8 @@ source $user_vars
 
 #build target
 target="release"
-deploy_dir="$RMBIN/$target"
-build_bin="target/$target/$RMGDIR"
+deploy_dir="$RMGBIN/$target"
+build_bin="target/$target/rm_server"
 
 if [[ ! -e $deploy_dir ]]; then
     mkdir $deploy_dir
