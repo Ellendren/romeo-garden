@@ -57,6 +57,7 @@ impl Connection {
     }
 
     //init new Pool if one doesn't exist for this version of Connection
+    //panics id conection can't make a new pool
     pub fn get_pool(mut self) -> Pool {
         match self.pool {
             Some(pool) => return pool,
@@ -81,5 +82,17 @@ impl Connection {
         };
 
         self.pool.unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Connection;
+
+    // fails of database connection is not succesful
+    #[test]
+    fn connection_succes() {
+        let conn = Connection::new(None);
+        conn.get_pool();
     }
 }
