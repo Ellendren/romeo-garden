@@ -8,7 +8,7 @@ target="release"
 deploy_dir="$RMBIN/$target"
 build_bin="target/$target/$RMGDIR"
 
-if [! -f $deploy_dir]; then
+if [! -e $deploy_dir]; then
     mkdir $deploy_dir
 fi
 
