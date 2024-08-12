@@ -17,5 +17,17 @@ pipeline {
                 sh './scripts/test.sh'
             }
         }
+
+        stage ('deploy') {
+            steps {
+                sh './scripts/deploy.sh'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWS()
+        }
     }
 }
