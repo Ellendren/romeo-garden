@@ -1,8 +1,18 @@
-use connection::Connection;
+use std::fmt::format;
 
-mod connection;
+use colored::Colorize;
+
+mod database;
+use cli::parser_args;
+use database::connection::Connection;
+mod cli;
 
 fn main() {
-    let conn = Connection::new(None);
-    conn.get_pool();
+    match parser_args() {
+        Ok(_) => {},
+        Err(err) => {
+            let msg = format!("{}: {:?}", "Err".red().bold(), err);
+            eprintln!("{}", msg);
+        }
+    };
 }
