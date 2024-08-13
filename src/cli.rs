@@ -1,5 +1,4 @@
-use mysql::consts::GeometryType;
-use serde::de::Expected;
+mod garden;
 
 #[derive(Debug)]
 pub enum Error {
@@ -11,22 +10,37 @@ pub enum Error {
 
 #[derive(Debug, PartialEq)]
 enum Command {
-    Gardern
+    Garden
+}
+
+impl Command {
+    fn run(&self, args: Vec<String>) -> Result<(), Error> {
+
+        match self {
+            Command::Garden => garden::garden_cmd(&args)
+        }
+
+        Ok(())
+    }
 }
 
 pub fn parser_args() -> Result<(), Error> {
     let command = std::env::args().nth(1).expect("Expected command");
     match match_command(command) {
-        Ok(_) => {},
+        Ok(cmd) => {
+            let (_, args): (Vec<usize>, Vec<String>) = std::env::args()
+                .enumerate()
+                .filter(|(i, _): &(usize, String)| *i>1)
+                .collect();
+            return cmd.run(args)
+        },
         Err(err) => return Err(err) 
     }
-
-    Ok(())
 }
 
 fn match_command(command: String) -> Result<Command, Error> {
     match command.as_str() {
-        "garden" => Ok(Command::Gardern),
+        "garden" => Ok(Command::Garden),
         "" => Err(Error::NoCommand("Expected command".to_string())),
         _ => {
             let msg = format!("{command}, is not a valid command");
