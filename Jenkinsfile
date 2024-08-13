@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        BRANCH_NAME = "${env.GIT_BRANCH.split('/').size() > 1 ? env.GIT_BRANCH.split('/')[1..-1].join('/') : env.GIT_BRANCH}"
+    }
 
     triggers {
         pollSCM ('*/5 * * * *')
@@ -20,7 +23,7 @@ pipeline {
 
         stage ('deploy') {
             steps {
-                sh './scripts/deploy.sh'
+                sh './scripts/deploy.sh $env.BRANCH_NAME'
             }
         }
     }
