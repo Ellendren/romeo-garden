@@ -23,7 +23,6 @@ pipeline {
 
         stage ('deploy') {
             steps {
-                echo BRANCH_NAME
                 sh './scripts/deploy.sh $BRANCH_NAME'
             }
         }

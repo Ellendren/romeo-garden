@@ -12,7 +12,7 @@ deploy_dir="$RMGBIN/$branch/$target"
 build_bin="target/$target/rm_server"
 
 if [[ ! -e $deploy_dir ]]; then
-    mkdir $deploy_dir
+    mkdir -p $deploy_dir
 fi
 
 cp -r $build_bin $deploy_dir
