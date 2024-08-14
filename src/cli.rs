@@ -1,4 +1,7 @@
+use mysql::Pool;
+
 mod garden;
+use crate::database::connection;
 
 #[derive(Debug)]
 pub enum Error {
@@ -10,14 +13,15 @@ pub enum Error {
 
 #[derive(Debug, PartialEq)]
 enum Command {
-    Garden
+    Garden,
 }
 
 impl Command {
-    fn run(&self, args: Vec<String>) -> Result<(), Error> {
+    fn run(&self, args: Vec<String>, pool: Pool) -> Result<(), Error> {
+        let pool = pool.clone();
 
         match self {
-            Command::Garden => garden::garden_cmd(&args)
+            Command::Garden => garden::garden_cmd(&args, pool)
         }
 
         Ok(())
@@ -25,6 +29,9 @@ impl Command {
 }
 
 pub fn parser_args() -> Result<(), Error> {
+    let conn = connection::Connection::new(None);
+    let pool = conn.get_pool();
+
     let command = std::env::args().nth(1).expect("Expected command");
     match match_command(command) {
         Ok(cmd) => {
@@ -32,7 +39,7 @@ pub fn parser_args() -> Result<(), Error> {
                 .enumerate()
                 .filter(|(i, _): &(usize, String)| *i>1)
                 .collect();
-            return cmd.run(args)
+            return cmd.run(args, pool)
         },
         Err(err) => return Err(err) 
     }
