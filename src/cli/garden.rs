@@ -6,7 +6,7 @@ use crate::database::garden_controller;
 pub fn garden_cmd(args: &Vec<String>, pool: Pool) {
     //default to view command if no commands passed
     if args.len() == 0 {
-        view_gardens(pool);
+        view_gardens(pool, &"".to_string());
 
         return;
     }
@@ -14,7 +14,7 @@ pub fn garden_cmd(args: &Vec<String>, pool: Pool) {
     //check command if exists
     let cmd = args[0].clone();
     match cmd.as_str() {
-        "view" => view_gardens(pool),
+        "view" => view_gardens(pool, args.iter().nth(1).unwrap_or(&"".to_string())),
         "add" => add_garden(pool, args.iter().nth(1).unwrap_or(&"".to_string())),
         "rm" => rm_garden(pool, args.iter().nth(1).unwrap_or(&"".to_string())),
         "new-name" => {
@@ -27,21 +27,30 @@ pub fn garden_cmd(args: &Vec<String>, pool: Pool) {
     }
 }
 
-fn view_gardens(pool: Pool) {
+fn view_gardens(pool: Pool, gname: &String) {
+    if gname.len() != 0 {
+        match garden_controller::view_garden_containers(pool, &gname) {
+            Ok(res) => println!("{:?}", res),
+            Err(e) => eprintln!("{:?}", e)
+        }
+
+        return;
+    }
+
     match garden_controller::view_gardens(pool) {
         Ok(res) => println!("{:?}", res),
         Err(e) => eprintln!("{:?}", e)
     };
 }
 
-fn add_garden(pool: Pool, name: &String) {
-    if name.len() == 0 {
+fn add_garden(pool: Pool, gname: &String) {
+    if gname.len() == 0 {
         eprintln!("{}: no name for garden add. Expected garden add <name>", "Error".red());
 
         return;
     }
 
-    match garden_controller::add_garden(pool, name) {
+    match garden_controller::add_garden(pool, gname) {
         Ok(_) => {},
         Err(e) => eprintln!("{}: {:?}", "Error".red(), e)
     }
@@ -80,7 +89,7 @@ fn help() {
         garden [command] [options]
 
     commands:
-        view
+        view [garden name]
         add <garden name>
         rm <garden name>
         new-name <old name> <new name>"#;
