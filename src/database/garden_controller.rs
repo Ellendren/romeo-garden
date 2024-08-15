@@ -16,6 +16,18 @@ pub fn view_gardens(pool: Pool) -> Result<Vec<String>, Error>{
     }
 }
 
+pub fn view_garden_containers(pool: Pool, gname: &str) -> Result<Vec<String>, Error> {
+    let mut conn = match pool.get_conn() {
+        Ok(conn) => conn,
+        Err(e) => return Err(e)
+    };
+
+    match conn.query(format!("CALL view_garden_containers('{gname}')")) {
+        Ok(res) => Ok(res),
+        Err(e) => Err(e)
+    }
+}
+
 pub fn add_garden(pool: Pool, gname: &str) -> Result<(), Error> {
     let query = format!("CALL add_garden('{gname}')");
     query_drop(pool, &query)
@@ -43,6 +55,7 @@ fn query_drop(pool: Pool, query: &str) -> Result<(), Error> {
 mod tests {
     use super::{
         view_gardens,
+        view_garden_containers,
         add_garden,
         remove_garden,
         new_name_garden
@@ -55,6 +68,16 @@ mod tests {
         let pool = conn.get_pool().clone();
         
         let res = view_gardens(pool);
+        println!("{:?}", res);
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn view_garden_containers_test() {
+        let conn = connection::Connection::new(None);
+        let pool = conn.get_pool().clone();
+        
+        let res = view_garden_containers(pool, "");
         println!("{:?}", res);
         assert!(res.is_ok());
     }
