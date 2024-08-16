@@ -1,6 +1,7 @@
 use mysql::{
     prelude::Queryable, Error, Pool
 };
+use super::query_drop;
 
 pub fn view_gardens(pool: Pool) -> Result<Vec<String>, Error>{
     let mut conn = match pool.get_conn() {
@@ -41,14 +42,6 @@ pub fn remove_garden(pool: Pool, gname: &str) -> Result<(), Error> {
 pub fn new_name_garden(pool: Pool, old_name: &str, new_name: &str) -> Result<(), Error>{
     let query = format!("CALL new_name_garden('{old_name}', '{new_name}')");
     query_drop(pool, &query)
-}
-
-fn query_drop(pool: Pool, query: &str) -> Result<(), Error> {
-    let mut conn = match pool.get_conn() {
-        Ok(conn) => conn,
-        Err(e) => return Err(e)
-    };
-    conn.query_drop(query)
 }
 
 #[cfg(test)]
