@@ -1,6 +1,7 @@
 use mysql::Pool;
 
 mod garden;
+mod container;
 use crate::database::connection;
 
 #[derive(Debug)]
@@ -14,6 +15,7 @@ pub enum Error {
 #[derive(Debug, PartialEq)]
 enum Command {
     Garden,
+    Container
 }
 
 impl Command {
@@ -21,7 +23,8 @@ impl Command {
         let pool = pool.clone();
 
         match self {
-            Command::Garden => garden::garden_cmd(&args, pool)
+            Command::Garden => garden::garden_cmd(&args, pool),
+            Command::Container => container::container_cmd(&args, pool)
         }
 
         Ok(())
@@ -48,6 +51,7 @@ pub fn parser_args() -> Result<(), Error> {
 fn match_command(command: String) -> Result<Command, Error> {
     match command.as_str() {
         "garden" => Ok(Command::Garden),
+        "container" => Ok(Command::Container),
         "" => Err(Error::NoCommand("Expected command".to_string())),
         _ => {
             let msg = format!("{command}, is not a valid command");
