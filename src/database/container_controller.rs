@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use super::query_drop;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ContainerController{
     container_name: String,
     garden_name: String,
@@ -58,6 +58,30 @@ impl ContainerController {
             height,
             volume
         }
+    }
+
+    pub fn container_name(&self) -> String {
+        self.container_name.clone()
+    }
+
+    pub fn garden_name(&self) -> String {
+        self.garden_name.clone()
+    }
+
+    pub fn length(&self) -> f32 {
+        self.length
+    }
+    
+    pub fn width(&self) -> f32 {
+        self.width
+    }
+
+    pub fn height(&self) -> f32 {
+        self.height
+    }
+
+    pub fn volume(&self) -> f32 {
+        self.volume
     }
 
     pub fn view_container(self, pool: Pool) -> Result<Vec<ContainerController>, Error> {
