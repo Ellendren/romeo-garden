@@ -2,6 +2,7 @@ use mysql::Pool;
 
 mod garden;
 mod container;
+mod container_img;
 use crate::database::connection;
 
 #[derive(Debug)]

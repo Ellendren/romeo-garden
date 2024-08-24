@@ -34,42 +34,14 @@ fn view_container(pool: Pool, container_name: &String, garden_name: &String) {
     }
 }
 
-fn display_container_img(container: ContainerController, scaler: Option<usize>){
-    let scaler = scaler.unwrap_or(1);
-    
+fn display_container_img(container: ContainerController, scaler: Option<f64>){
     let container_name = container.container_name();
     let garden_name = container.garden_name();
-    let mut container_str = format!(
-        "\tContainer: {container_name}
-        Garden: {garden_name}\n");
-
-    //format rows
-    //double row length for better formating
-    let row_len = 2*(scaler * container.length() as usize) / INCHS_IN_FEET;
-
-    let mut top_bottom_row = String::new();
-    for _ in 0..row_len {
-        top_bottom_row.push('+');
-    }
-    top_bottom_row.push('\n');
-
-    let mut row = String::new();
-    row.push('|');
-    for _ in 0..row_len-2 {
-        row.push(' ');
-    }
-    row.push('|');
-    row.push('\n');
-
-    //add colums to container_str
-    let col_len = (scaler * container.width() as usize)/ INCHS_IN_FEET;
-    container_str.push_str(&top_bottom_row);
-    for _ in 0..col_len {
-        container_str.push_str(&row);
-    }
-    container_str.push_str(&top_bottom_row);
+    let container_str = format!("Container: {container_name}\nGarden: {garden_name}");
 
     println!("{}", container_str);
+    crate::cli::container_img::ContainerIMG::new(&container, None)
+        .img_str();
 } 
 
 fn help() {

@@ -10,10 +10,10 @@ pub struct ContainerController{
     container_name: String,
     garden_name: String,
     ctype: String,
-    width: f32,
-    length: f32,
-    height: f32,
-    volume: f32,
+    width: f64,
+    length: f64,
+    height: f64,
+    volume: f64,
 }
 
 impl ContainerController {
@@ -23,10 +23,10 @@ impl ContainerController {
         container_name: String,
         garden_name: String,
         ctype: Option<String>,
-        width: Option<f32>,
-        length:  Option<f32>,
-        height:  Option<f32>,
-        volume:  Option<f32>,
+        width: Option<f64>,
+        length:  Option<f64>,
+        height:  Option<f64>,
+        volume:  Option<f64>,
     ) -> Self {
         let ctype = match ctype {
             Some(val) => val,
@@ -68,19 +68,19 @@ impl ContainerController {
         self.garden_name.clone()
     }
 
-    pub fn length(&self) -> f32 {
+    pub fn length(&self) -> f64 {
         self.length
     }
     
-    pub fn width(&self) -> f32 {
+    pub fn width(&self) -> f64 {
         self.width
     }
 
-    pub fn height(&self) -> f32 {
+    pub fn height(&self) -> f64 {
         self.height
     }
 
-    pub fn volume(&self) -> f32 {
+    pub fn volume(&self) -> f64 {
         self.volume
     }
 
