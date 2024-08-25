@@ -1,9 +1,7 @@
-use mysql::{binlog::row, Pool};
+use mysql::Pool;
 use colored::Colorize;
 
 use crate::database::container_controller::{self, ContainerController};
-
-const INCHS_IN_FEET: usize = 12;
 
 pub fn container_cmd(args: &Vec<String>, pool: Pool) {
     let cmd = if args.len() > 0 {args[0].clone()} else {format!("no command entered")};

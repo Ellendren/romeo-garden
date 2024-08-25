@@ -1,4 +1,5 @@
 use mysql::Pool;
+use colored::Colorize;
 
 mod garden;
 mod container;
@@ -16,7 +17,9 @@ pub enum Error {
 #[derive(Debug, PartialEq)]
 enum Command {
     Garden,
-    Container
+    Container,
+    Start,
+    Exit
 }
 
 impl Command {
@@ -25,7 +28,53 @@ impl Command {
 
         match self {
             Command::Garden => garden::garden_cmd(&args, pool),
-            Command::Container => container::container_cmd(&args, pool)
+            Command::Container => container::container_cmd(&args, pool),
+            Command::Exit => {
+                println!("{}", "Goodbye".blue());
+                std::process::exit(0);
+            }
+            Command::Start => {
+                println!("{}", "Welcome to Romeo Garden!".blue());
+
+                let mut cmd_str = String::new();
+                while cmd_str.to_lowercase() != format!("exit") {
+                    cmd_str = format!("");
+                    println!("Enter command (or exit to end):");
+                    match std::io::stdin().read_line(&mut cmd_str){
+                        Ok(_) => {},
+                        Err(e) => eprint!("{}: {:?}", "Input Error".red(), e)
+                    };
+
+                    //remove endline and split commands and oprtions
+                    cmd_str.remove(cmd_str.len()-1);
+
+                    let mut between_quotes = false;
+                    let args: Vec<String> = cmd_str
+                        .clone()
+                        .split(|c| {
+                            if c == '"' {
+                                between_quotes = !between_quotes;
+                                return true;
+                            }
+                            else if c == ' '  && !between_quotes{
+                                return true;
+                            }
+                            else {
+                                false
+                            }
+                        })
+                        .map(|x| x.to_string())
+                        .filter(|s| s.len() != 0)
+                        .collect();
+
+                    match match_command(args[0].clone()){
+                        Ok(cmd) => {
+                            cmd.run(args[1..].to_vec(), pool.clone()).unwrap();
+                        },
+                        Err(e) => return Err(e)
+                    }
+                }
+            }
         }
 
         Ok(())
@@ -53,6 +102,8 @@ fn match_command(command: String) -> Result<Command, Error> {
     match command.as_str() {
         "garden" => Ok(Command::Garden),
         "container" => Ok(Command::Container),
+        "start" => Ok(Command::Start),
+        "exit" => Ok(Command::Exit),
         "" => Err(Error::NoCommand("Expected command".to_string())),
         _ => {
             let msg = format!("{command}, is not a valid command");

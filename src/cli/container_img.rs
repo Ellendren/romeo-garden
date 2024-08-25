@@ -1,5 +1,3 @@
-use std::{clone, io::Empty};
-
 use crate::database::container_controller::ContainerController;
 
 const DEFAULT_SCALER: f64 = 0.2;
@@ -11,7 +9,7 @@ enum ContainerCell {
     Plant{
         val: &'static str,
         is_root: bool,
-        size: i64
+        size: f64
     },
     Sensor
 }
@@ -63,11 +61,11 @@ impl ContainerIMG {
         container_img
     }
 
-    pub fn add_plant(mut self, plant_symbol: &'static str, size: i64, x_pos: f64, y_pos: f64) -> Self{
+    pub fn add_plant(mut self, plant_symbol: &'static str, size: f64, x_pos: f64, y_pos: f64) -> Self{
         let plant_cell = ContainerCell::Plant { 
             val: plant_symbol, 
             is_root: true, 
-            size: size 
+            size: size * self.scaler
         };
 
         self.cells[(x_pos*self.scaler) as usize][(y_pos*self.scaler) as usize] = plant_cell;
