@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use mysql::Pool;
 use colored::Colorize;
 
@@ -110,6 +112,61 @@ fn match_command(command: String) -> Result<Command, Error> {
             Err(Error::InvallidCommand(msg))
         }
     }
+}
+
+//print's a prompt and returns the input as a str
+fn prompt_input(prompt: &str) -> String{
+    print!("{}", prompt.green());
+    std::io::stdout().flush().unwrap();
+    let mut input = String::new();
+    match std::io::stdin().read_line(&mut input) {
+        Ok(_) => {},
+        Err(e) => {
+            eprintln!("{}: for reading input for prompt '{}'. {:?}", "Error".red(), prompt.green(), e);
+            println!("{}", "Try again".green());
+            return prompt_input(prompt)
+        }
+    };
+    input
+}
+
+//print's a prompt and returns the input as a str
+fn prompt_input_f64(prompt: &str) -> Option<f64>{
+    print!("{}", prompt.green());
+    std::io::stdout().flush().unwrap();
+    let mut input = String::new();
+    match std::io::stdin().read_line(&mut input) {
+        Ok(_) => {},
+        Err(e) => {
+            eprintln!("{}: for reading input for prompt: enter 'none' if no known value'{}'. {:?}", 
+                "Error".red(), 
+                prompt.green(), 
+                e
+            );
+            println!("{}", "Try again".green());
+            return prompt_input_f64(prompt)
+        }
+    };
+
+    input.remove(input.len()-1);
+    if input.to_lowercase() == "none" {
+        return None;
+    }
+
+    let input_f64 = match input.parse::<f64>() {
+        Ok(val) => val,
+        Err(e) => {
+            eprintln!("{}: for reading input({}) for prompt '{}'. '{}'", 
+                "Error".red(), 
+                input.blue(), 
+                prompt.green(), 
+                e.to_string().red()
+            );
+            return prompt_input_f64(prompt);
+        }
+    };
+
+    Some(input_f64)
 }
 
 #[cfg(test)]

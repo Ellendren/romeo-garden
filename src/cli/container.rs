@@ -1,7 +1,10 @@
+use std::io::Write;
+
 use mysql::Pool;
 use colored::Colorize;
 
 use crate::database::container_controller::{self, ContainerController};
+use crate::cli::{prompt_input, prompt_input_f64};
 
 pub fn container_cmd(args: &Vec<String>, pool: Pool) {
     let cmd = if args.len() > 0 {args[0].clone()} else {format!("no command entered")};
@@ -11,6 +14,7 @@ pub fn container_cmd(args: &Vec<String>, pool: Pool) {
             args_iter.next();
             view_container(pool, args_iter.next().unwrap_or(&String::new()), args_iter.next().unwrap_or(&String::new()));
         },
+        "add" => add_container(pool),
         "help" => help(),
         _ => eprintln!("{} command '{cmd}' not found for container. Run 'container help; to see availavle commands", "Error:".red())
     }
@@ -32,13 +36,25 @@ fn view_container(pool: Pool, container_name: &String, garden_name: &String) {
     }
 }
 
+//default adds raised bed
+fn add_container(pool: Pool) {
+    println!("{}", "Enter container info".green());
+
+    let garden_name = prompt_input("Garden name: ");
+    let container_name = prompt_input("Container name: ");
+    let length = prompt_input_f64("length: ");
+    let width = prompt_input_f64("width: ");
+    let height = prompt_input_f64("height: ");
+    let volume = prompt_input_f64("volume: ");
+}
+
 fn display_container_img(container: ContainerController, scaler: Option<f64>){
     let container_name = container.container_name();
     let garden_name = container.garden_name();
     let container_str = format!("Container: {container_name}\nGarden: {garden_name}");
 
     println!("{}", container_str);
-    crate::cli::container_img::ContainerIMG::new(&container, None)
+    crate::cli::container_img::ContainerIMG::new(&container, scaler)
         .img_str();
 } 
 
@@ -49,7 +65,8 @@ fn help() {
         container [command] [options]
 
     commands:
-        view <container_name> <garden name>"#;
+        view <container_name> <garden name>
+        add"#;
 
     println!("{help}");
 }
