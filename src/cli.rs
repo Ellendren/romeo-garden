@@ -127,6 +127,8 @@ fn prompt_input(prompt: &str) -> String{
             return prompt_input(prompt)
         }
     };
+    //remove endline
+    input.remove(input.len()-1);
     input
 }
 
@@ -148,6 +150,7 @@ fn prompt_input_f64(prompt: &str) -> Option<f64>{
         }
     };
 
+    //remove endline
     input.remove(input.len()-1);
     if input.to_lowercase() == "none" {
         return None;

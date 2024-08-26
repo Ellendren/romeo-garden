@@ -46,6 +46,21 @@ fn add_container(pool: Pool) {
     let width = prompt_input_f64("width: ");
     let height = prompt_input_f64("height: ");
     let volume = prompt_input_f64("volume: ");
+
+    let new_container = container_controller::ContainerController::new(
+        container_name, 
+        garden_name, 
+        None, 
+        width, 
+        length, 
+        height, 
+        volume
+    );
+
+    match new_container.add_container_bed(pool){
+        Ok(_) => display_container_img(new_container, None),
+        Err(e) => eprintln!("{}:, {:?}", "Err".red(), e)
+    };
 }
 
 fn display_container_img(container: ContainerController, scaler: Option<f64>){

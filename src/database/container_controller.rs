@@ -84,11 +84,11 @@ impl ContainerController {
         self.volume
     }
 
-    pub fn view_container(self, pool: Pool) -> Result<Vec<ContainerController>, Error> {
+    pub fn view_container(&self, pool: Pool) -> Result<Vec<ContainerController>, Error> {
         view_container(pool, &self.container_name, &self.garden_name)
     }
 
-    pub fn add_container_bed(self, pool: Pool) -> Result<(), Error> {
+    pub fn add_container_bed(&self, pool: Pool) -> Result<(), Error> {
         add_container_bed(
             pool, 
             &self.container_name,
@@ -100,7 +100,7 @@ impl ContainerController {
         )
     }
 
-    pub fn drop_container(self, pool: Pool) -> Result<(), Error> {
+    pub fn drop_container(&self, pool: Pool) -> Result<(), Error> {
         drop_container(pool, &self.container_name, &self.garden_name)
     }
 }

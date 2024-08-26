@@ -47,7 +47,7 @@ impl ContainerIMG {
         }
 
         let col_len = (container.width() * container_img.scaler) as usize;
-        let row_len = (container.length() * container_img.scaler) as usize;
+        let row_len = (container.length() * container_img.scaler) as usize + 2;
         container_img.cells.push(vec![ContainerCell::Edge; row_len]);
         for _ in 0..col_len {
             let mut row = vec![ContainerCell::Edge];
