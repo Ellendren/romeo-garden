@@ -173,7 +173,7 @@ mod tests {
     }
 
     #[test]
-    fn add_container_bed_test() {
+    fn add_drop_container_bed_test() {
         let conn = connection::Connection::new(None);
         let pool = conn.get_pool();
 
@@ -190,26 +190,12 @@ mod tests {
             None
         );
 
+        // add container
         let res = test_container.add_container_bed(pool.clone());
         println!("{:?}", res);
         assert!(res.is_ok());
-    }
 
-    #[test]
-    fn drop_container() {
-        let conn = connection::Connection::new(None);
-        let pool = conn.get_pool();
-
-        let test_container: ContainerController = ContainerController::new(
-            TEST_CNAME.to_string(),
-            TEST_GNAME.to_string(),
-            None, 
-            None, 
-            None, 
-            None, 
-            None
-        );
-
+        //drop container
         let res = test_container.drop_container(pool.clone());
         println!("{:?}", res);
 

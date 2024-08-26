@@ -14,7 +14,7 @@ pub fn container_cmd(args: &Vec<String>, pool: Pool) {
             args_iter.next();
             view_container(pool, args_iter.next().unwrap_or(&String::new()), args_iter.next().unwrap_or(&String::new()));
         },
-        "add" => add_container(pool),
+        "add" => add_container(pool, &args[1..].to_vec()),
         "help" => help(),
         _ => eprintln!("{} command '{cmd}' not found for container. Run 'container help; to see availavle commands", "Error:".red())
     }
@@ -37,10 +37,25 @@ fn view_container(pool: Pool, container_name: &String, garden_name: &String) {
 }
 
 //default adds raised bed
-fn add_container(pool: Pool) {
+fn add_container(pool: Pool, args: &Vec<String>) {
     println!("{}", "Enter container info".green());
+    println!("{:?}", args);
 
-    let garden_name = prompt_input("Garden name: ");
+    let mut garden_name = None;
+    for arg in args.iter() {
+        let option: Vec<&str> = arg.split('=').collect();
+
+        if option.len() == 2{
+            let (key, val) = (option[0], option[1]);
+
+            match key {
+                "garden=" => garden_name = Some(val.to_string()),
+                _ => {}
+            }
+        }
+    }
+
+    let garden_name = garden_name.unwrap_or(prompt_input("Garden name: "));
     let container_name = prompt_input("Container name: ");
     let length = prompt_input_f64("length: ");
     let width = prompt_input_f64("width: ");
