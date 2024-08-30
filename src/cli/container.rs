@@ -22,12 +22,28 @@ pub fn container_cmd(args: &Vec<String>, pool: Pool) {
 }
 
 fn view_container(pool: Pool, container_name: &String, garden_name: &String) {
-    if container_name.len() == 0 || garden_name.len() == 0 {
-        eprintln!("{}: {}", "Error".red(), "expected a command like 'container view <container name> <garden name>'");
+    if garden_name.len() == 0 && container_name.len() > 0 {
+        //if garden name is zero than treat container name as garden insted
+        view_containers(pool, container_name);
+        return;
+    }
+    else if garden_name.len() == 0 && container_name.len() == 0 {
+        eprintln!("{}: {}", "Error".red(), "expected a command like 'container view [container name] <garden name>'");
         return;
     }
 
     match container_controller::view_container(pool, container_name, garden_name) {
+        Ok(res) => {
+            for container in res.iter() {
+                display_container_img(container.clone(), None);
+            }
+        },
+        Err(e) => eprintln!("{}:, {:?}", "Err".red(), e)
+    }
+}
+
+fn view_containers(pool: Pool, garden_name: &String) {
+    match container_controller::view_containers(pool, garden_name) {
         Ok(res) => {
             for container in res.iter() {
                 display_container_img(container.clone(), None);
@@ -127,7 +143,7 @@ fn help() {
         container [command] [options]
 
     commands:
-        view <container_name> <garden name>
+        view [container_name] <garden name>
         add [<options>]
             options:
                 garden=<garden name>

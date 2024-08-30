@@ -126,6 +126,27 @@ pub fn view_container(pool: Pool, container_name: &str, garden_name: &str) -> Re
     })
 }
 
+pub fn view_containers(pool: Pool, garden_name: &str) -> Result<Vec<ContainerController>, Error> {
+    let mut conn = match pool.get_conn() {
+        Ok(conn) => conn,
+        Err(e) => return Err(e)
+    };
+
+    let query = format!("CALL view_garden_containers('{garden_name}')");
+    conn.query_map(query, 
+        |(container_name, garden_name, ctype, width, length, height, volume)| {
+            ContainerController {
+                container_name,
+                garden_name,
+                ctype,
+                width,
+                length,
+                height,
+                volume
+            }
+    })
+}
+
 pub fn add_container_bed(
     pool: Pool, 
     cname: &str, 
@@ -155,7 +176,8 @@ pub fn drop_container(pool: Pool, cname: &str, gname: &str) -> Result<(), Error>
 mod tests {
     use super::{
         view_container,
-        ContainerController
+        ContainerController,
+        view_containers
     };
     use super::super::connection;
 
@@ -168,6 +190,16 @@ mod tests {
         let pool = conn.get_pool();
 
         let res = view_container(pool.clone(), "", "");
+        println!("{:?}", res);
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn view_containers_test() {
+        let conn = connection::Connection::new(None);
+        let pool = conn.get_pool();
+
+        let res = view_containers(pool.clone(), "");
         println!("{:?}", res);
         assert!(res.is_ok());
     }
