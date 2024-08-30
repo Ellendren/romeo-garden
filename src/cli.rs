@@ -51,12 +51,17 @@ impl Command {
                     cmd_str.remove(cmd_str.len()-1);
 
                     let mut between_quotes = false;
+                    let mut is_option = false;
                     let args: Vec<String> = cmd_str
                         .clone()
                         .split(|c| {
                             if c == '"' {
                                 between_quotes = !between_quotes;
-                                return true;
+                                return !is_option;
+                            }
+                            else if c == '=' && !between_quotes {
+                                is_option = true;
+                                return false;
                             }
                             else if c == ' '  && !between_quotes{
                                 return true;
