@@ -40,15 +40,8 @@ impl Command {
 
                 let mut cmd_str = String::new();
                 while cmd_str.to_lowercase() != format!("exit") {
-                    cmd_str = format!("");
                     println!("Enter command (or exit to end):");
-                    match std::io::stdin().read_line(&mut cmd_str){
-                        Ok(_) => {},
-                        Err(e) => eprint!("{}: {:?}", "Input Error".red(), e)
-                    };
-
-                    //remove endline and split commands and oprtions
-                    cmd_str.remove(cmd_str.len()-1);
+                    cmd_str = prompt_input(">> ");
 
                     let mut between_quotes = false;
                     let mut is_option = false;

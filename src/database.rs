@@ -1,6 +1,7 @@
 pub mod connection;
 pub mod garden_controller;
 pub mod container_controller;
+pub mod plant_controller;
 
 use mysql::{
     prelude::Queryable, Error, Pool

@@ -23,7 +23,7 @@ pub fn container_cmd(args: &Vec<String>, pool: Pool) {
 
 fn view_container(pool: Pool, container_name: &String, garden_name: &String) {
     if garden_name.len() == 0 && container_name.len() > 0 {
-        //if garden name is zero than treat container name as garden insted
+        //if garden_name is zero than treat container_name as garden instead
         view_containers(pool, container_name);
         return;
     }
