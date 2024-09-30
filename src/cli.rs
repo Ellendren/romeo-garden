@@ -6,6 +6,7 @@ use colored::Colorize;
 mod garden;
 mod container;
 mod container_img;
+mod plant;
 use crate::database::connection;
 
 #[derive(Debug)]
@@ -20,6 +21,7 @@ pub enum Error {
 enum Command {
     Garden,
     Container,
+    Plant,
     Start,
     Exit
 }
@@ -31,6 +33,7 @@ impl Command {
         match self {
             Command::Garden => garden::garden_cmd(&args, pool),
             Command::Container => container::container_cmd(&args, pool),
+            Command::Plant => plant::plant_cmd(&args, pool),
             Command::Exit => {
                 println!("{}", "Goodbye".blue());
                 std::process::exit(0);
@@ -102,6 +105,7 @@ fn match_command(command: String) -> Result<Command, Error> {
     match command.as_str() {
         "garden" => Ok(Command::Garden),
         "container" => Ok(Command::Container),
+        "plant" => Ok(Command::Plant),
         "start" => Ok(Command::Start),
         "exit" => Ok(Command::Exit),
         "" => Err(Error::NoCommand("Expected command".to_string())),
