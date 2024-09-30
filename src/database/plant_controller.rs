@@ -4,7 +4,7 @@ use mysql::{
     prelude::Queryable, Error, Pool
 };
 use serde::{Deserialize, Serialize};
-use chrono::{NaiveDate, offset::Local};
+use chrono::{offset::{self, Local}, NaiveDate};
 
 use super::query_drop;
 
@@ -62,6 +62,10 @@ impl Plant {
     pub fn drop(&self, pool: Pool) -> Result<(), Error> {
         drop_plant(pool, self.plant_id)
     }
+
+    pub fn view(&self, pool: Pool) -> Result<Vec<Plant>, Error> {
+        view_plant(pool, self.plant_id)
+    }
 }
 
 impl Type {
@@ -103,6 +107,46 @@ pub fn drop_plant(pool: Pool, plant_id: u64) -> Result<(), Error> {
     query_drop(pool, &query)
 }
 
+pub fn view_plant(pool: Pool, plant_id: u64) -> Result<Vec<Plant>, Error> {
+    let query = format!("CALL view_plant(\"{plant_id}\")");
+    let mut conn = match pool.get_conn()   {
+        Ok(conn) => conn,
+        Err(e) => return Err(e)
+    };
+
+    conn.query_map(
+        query,
+        |(
+            plant_id,
+            date_planted,
+            container_name,
+            garden_name,
+            location,
+            species,
+            variety,
+            size,
+            info_file
+        )| {    
+            let date_planted: String = date_planted;
+            let date_planted = NaiveDate::parse_from_str(date_planted.as_str(), "%Y-%m-%d")
+                .unwrap_or(offset::Local::now().date_naive());
+            Plant {
+                plant_id,
+                date_planted,
+                container_name,
+                garden_name,
+                location,
+                t: Type {
+                    species,
+                    variety,
+                    size,
+                    info_file
+                }
+            }
+        }
+    )
+}
+
 pub fn add_plant_type(
     pool: Pool, 
     species: String, 
@@ -127,10 +171,10 @@ pub fn drop_plant_type(pool: Pool, species: String, variety: String) -> Result<(
 #[cfg(test)]
 mod tests {
     use super::{
-        add_plant, add_plant_type, drop_plant, Plant
+        add_plant_type, drop_plant_type, Plant, view_plant
     };
-    use crate::database::{connection, plant_controller::drop_plant_type};
     use mysql::Pool;
+    use crate::database::connection;
 
     const TEST_CNAME: &str = "container_name";
     const TEST_GNAME: &str = "garden_name";
@@ -218,5 +262,15 @@ mod tests {
 
         // cleanup
         plant_type_cleanup(pool);
+    }
+
+    #[test]
+    fn view_plant_test() {
+        let conn = connection::Connection::new(None);
+        let pool = conn.get_pool();
+
+        let res = view_plant(pool, 0);
+        println!("{:?}", res);
+        assert!(res.is_ok());
     }
 }

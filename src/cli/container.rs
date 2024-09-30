@@ -2,7 +2,6 @@ use std::io::Write;
 
 use mysql::Pool;
 use colored::Colorize;
-use toml::Spanned;
 
 use crate::database::container_controller::{self, ContainerController};
 use crate::cli::{prompt_input, prompt_input_f64};
@@ -17,7 +16,7 @@ pub fn container_cmd(args: &Vec<String>, pool: Pool) {
         },
         "add" => add_container(pool, &args[1..].to_vec()),
         "help" => help(),
-        _ => eprintln!("{} command '{cmd}' not found for container. Run 'container help; to see availavle commands", "Error:".red())
+        _ => eprintln!("{} command '{cmd}' not found for container. Run 'container help' to see availavle commands", "Error:".red())
     }
 }
 
