@@ -23,6 +23,7 @@ enum Command {
     Container,
     Plant,
     Start,
+    Help,
     Exit
 }
 
@@ -34,6 +35,7 @@ impl Command {
             Command::Garden => garden::garden_cmd(&args, pool),
             Command::Container => container::container_cmd(&args, pool),
             Command::Plant => plant::plant_cmd(&args, pool),
+            Command::Help => help(),
             Command::Exit => {
                 println!("{}", "Goodbye".blue());
                 std::process::exit(0);
@@ -108,6 +110,7 @@ fn match_command(command: String) -> Result<Command, Error> {
         "plant" => Ok(Command::Plant),
         "start" => Ok(Command::Start),
         "exit" => Ok(Command::Exit),
+        "help" => Ok(Command::Help),
         "" => Err(Error::NoCommand("Expected command".to_string())),
         _ => {
             let msg = format!("{command}, is not a valid command");
@@ -172,6 +175,22 @@ fn prompt_input_f64(prompt: &str) -> Option<f64>{
     };
 
     Some(input_f64)
+}
+
+
+
+fn help() {
+    let help = 
+    r#"rm_server help:
+    useage:
+        rm_server [command]
+
+    commands:
+        garden <command>
+        container [command]
+        plant [command]
+    "#;
+    println!("{help}")
 }
 
 #[cfg(test)]
