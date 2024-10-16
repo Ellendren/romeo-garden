@@ -109,6 +109,17 @@ pub fn drop_plant(pool: Pool, plant_id: u64) -> Result<(), Error> {
 
 pub fn view_plant(pool: Pool, plant_id: u64) -> Result<Vec<Plant>, Error> {
     let query = format!("CALL view_plant(\"{plant_id}\")");
+    
+    plant_query_map(pool, query)
+}
+
+pub fn get_plants_container(pool: Pool, container_name: String, garden_name: String) -> Result<Vec<Plant>, Error> {
+    let query = format!("CALL get_plants_container(\"{container_name}\", \"{garden_name}\")");
+    
+    plant_query_map(pool, query)
+}
+
+fn plant_query_map(pool: Pool, query: String) -> Result<Vec<Plant>, Error> {
     let mut conn = match pool.get_conn()   {
         Ok(conn) => conn,
         Err(e) => return Err(e)
@@ -174,7 +185,7 @@ mod tests {
         add_plant_type, drop_plant_type, Plant, view_plant
     };
     use mysql::Pool;
-    use crate::database::connection;
+    use crate::database::{connection, plant_controller::get_plants_container};
 
     const TEST_CNAME: &str = "container_name";
     const TEST_GNAME: &str = "garden_name";
@@ -270,6 +281,16 @@ mod tests {
         let pool = conn.get_pool();
 
         let res = view_plant(pool, 0);
+        println!("{:?}", res);
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn get_plants_container_test() {
+        let conn = connection::Connection::new(None);
+        let pool = conn.get_pool();
+
+        let res = get_plants_container(pool, String::new(), String::new());
         println!("{:?}", res);
         assert!(res.is_ok());
     }
